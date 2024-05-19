@@ -1,0 +1,59 @@
+﻿
+
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createRoleModal">
+    Create Role
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="createRoleModal" tabindex="-1" role="dialog" aria-labelledby="createRoleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createRoleModalLabel">Create Role</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Role form -->
+                <form id="createRoleForm">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" class="form-control" id="name" name="Name" placeholder="Enter role name" required>
+                    </div>
+                 
+                
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <!-- Include jQuery, SweetAlert, and Modal libraries -->
+    <script>
+        $(document).ready(function () {
+           
+            // Submit form using AJAX
+            $('#createRoleForm').submit(function (event) {
+                debugger;
+                event.preventDefault();
+                var formData = $(this).serialize();
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("Create", "Role")',
+                    data: formData,
+                    success: function (data) {
+                        $('#createRoleModal').modal('hide');
+                        // Refresh page or update role list
+                    },
+                    error: function (error) {
+                        // Handle error
+                        console.log(error);
+                    }
+                });
+            });
+        });
+    </script>
+}

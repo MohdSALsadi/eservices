@@ -1,0 +1,291 @@
+﻿<!-- Include AmCharts library -->
+
+<script src="~/js/core.js"></script>
+<script src="~/js/charts.js"></script>
+<script src="~/js/animated.js"></script>
+
+
+@model Pattern_of_life.Models.DensityViewModel
+
+@{
+    var densityEntries = Model.DensityMap.ToList();
+    var shipActivitiesList = Model.ShipActivities.ToList();
+    var count = Math.Max(densityEntries.Count, shipActivitiesList.Count);
+    // Define a dictionary to map ActivityNameID to colors
+    var activityColors = new Dictionary<int, string>
+{
+        { 1, "Orange" },
+        { 2, "blue" },
+        { 3, "green" },
+        // Add more mappings as needed
+    };
+}
+<head>
+    <style>
+        #map {
+            margin: 1%;
+            height: 650px;
+        }
+
+        .map-legend {
+            padding: 10px;
+            border: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            border-radius: 10px; /* إضافة حدود منحنية */
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            margin-left: 5px;
+            margin-right: 5px;
+        }
+
+        .green {
+            background-color: green;
+        }
+
+        .blue {
+            background-color: blue;
+        }
+
+        .red {
+            background-color: #800020;
+        }
+        .leaflet-container {
+            box-shadow: 20px 0 30px rgba(0, 0, 0, 0.2); /* تعيين الظلال الخفيفة على اليمين واليسار */
+            border-radius: 5px; /* جعل الزاوية منحنية */
+        }
+    </style>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <!-- Leaflet.ExtraMarkers CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-extra-markers/dist/css/leaflet.extra-markers.min.css" />
+
+</head>
+<div class="map-legend">
+    <div class="legend-item">
+        <div class="legend-color green"></div>
+        <span>التهريب</span>
+    </div>
+    <div class="legend-item">
+        <div class="legend-color blue"></div>
+        <span>العبور</span>
+    </div>
+    <div class="legend-item">
+        <div class="legend-color red"></div>
+        <span>التسلل</span>
+    </div>
+</div>
+
+<div id="map"></div>
+<button class="btn btn-outline-info mt-2" id="updateThreshold"> <i class="bi bi-pencil-square "></i> Update Distance Threshold</button>
+
+
+
+
+<!-- Include Leaflet JavaScript -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<!-- Include Leaflet.heat JavaScript -->
+<script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Leaflet JavaScript -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<!-- Leaflet.ExtraMarkers JavaScript -->
+<script src="https://unpkg.com/leaflet-extra-markers/dist/js/leaflet.extra-markers.min.js"></script>
+
+<script src="~/js/site.js" asp-append-version="true"></script>
+
+<script>
+
+        //تمركز الخريطة على خريطة سلطنة عمان
+        var map = L.map('map').setView([21.6104, 58.5905], 6);
+
+        // Add a tile layer to the map (OpenStreetMap)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Iterate over the model data and call the function to add markers
+
+
+    @for (var i = 0; i < count; i++)
+    {
+        if (i < shipActivitiesList.Count)
+        {
+            var shipActivity = shipActivitiesList[i];
+            var latitude = shipActivity.Latitude;
+            var longitude = shipActivity.Longitude;
+            var activityColor = "Purple"; // Default color
+
+            // Check if the ActivityNameID exists in the dictionary
+            if (activityColors.ContainsKey(shipActivity.ActivityNameID))
+            {
+                // Retrieve the color corresponding to the ActivityNameID
+                activityColor = activityColors[shipActivity.ActivityNameID];
+            }
+            var details = $"SHIP NAME: {shipActivity.Name}, TIME: {shipActivity.DTG}, SPEED: {shipActivity.Speed}, Coordinates: {latitude.ToString()} {longitude.ToString()}, REMARK: {shipActivity.Remarks}";
+
+            // Create a marker with a popup label for ship activity
+            @Html.Raw($@"
+        var activityMarker = L.marker([{latitude}, {longitude}], {{
+        icon: L.ExtraMarkers.icon({{
+        icon: 'fa-number',
+        number: '',
+        markerColor: '{activityColor}'
+        }})
+        }}).addTo(map);
+
+        activityMarker.bindPopup('{details}');
+        ")
+            ;
+        }
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        $('#updateThreshold').click(function () {
+            // استدعاء sweetAlert لتأكيد التحديث
+            Swal.fire({
+                title: 'Update Distance Rang',
+                text: 'Please Enter New Value:',
+                input: 'number',
+                showCancelButton: true,
+                confirmButtonText: 'Update',
+                cancelButtonText: 'Cancel',
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'Please Enter Valid Value';
+                    }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // قم بإرسال القيمة المحدثة إلى الخادم هنا
+                    var Id = result.value;
+                    $.post('/Settings/Index/', { Id: Id }, function (data) {
+                        // عرض رسالة ناجحة بعد التحديث
+                        Swal.fire('تم التحديث!', 'تم تحديث الحد الأقصى بنجاح.', 'success');
+                    }).fail(function () {
+                        // في حالة فشل التحديث
+                        Swal.fire('خطأ!', 'حدثت مشكلة أثناء التحديث.', 'error');
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+@* <div class="card-body card-dashboard">
+    <div class="row">
+        <div class="col-md-9 offset-md-1">
+            <!-- Center the first chart -->
+            <div id="chart-request-container" style="width: 100%; height: 400px;"></div>
+        </div>
+        <div class="col-md-9 offset-md-1">
+            <!-- Center the second chart -->
+            <div id="chart-user-container" style="width: 100%; height: 400px;"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-9 offset-md-1" style="margin-top:5%;">
+            <!-- Center the third chart -->
+            <div id="chart-request-establishment" style="width: 100%; height: 400px;"></div>
+        </div>
+    </div>
+</div> *@
+
+
+
+
+@* <script>
+    // Function to generate random colors
+    function getRandomColor() {
+        return '#' + Math.floor(Math.random() * 16777215).toString(16);
+    }
+
+    // Fetch data for request status
+    fetch("@Url.Action("GetRequestStatus")")
+        .then(response => response.json())
+        .then(result => {
+            const data = [];
+            result.forEach(item => {
+                data.push({ label: item.status, value: item.count, color: getRandomColor() });
+            });
+
+            // Create pie chart
+            var chart = am4core.create("chart-request-container", am4charts.PieChart);
+            chart.data = data;
+            chart.innerRadius = am4core.percent(40);
+            chart.legend = new am4charts.Legend();
+
+            var series = chart.series.push(new am4charts.PieSeries());
+            series.dataFields.value = "value";
+            series.dataFields.category = "label";
+            series.colors.list = data.map(item => am4core.color(item.color));
+
+            chart.legend.useDefaultMarker = true;
+            chart.legend.labels.template.text = "{category}";
+        });
+
+    // Fetch data for user requests
+    fetch("@Url.Action("GetUserRequests")")
+        .then(response => response.json())
+        .then(result => {
+            const data = [];
+            result.forEach(item => {
+                data.push({ category: item.name, value: item.count, color: getRandomColor() });
+            });
+
+            // Create column chart
+            var chart = am4core.create("chart-user-container", am4charts.XYChart);
+            chart.data = data;
+
+            var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+            categoryAxis.dataFields.category = "category";
+            categoryAxis.renderer.minGridDistance = 30;
+            categoryAxis.renderer.labels.template.wrap = true;
+            categoryAxis.renderer.labels.template.maxWidth = 120;
+
+            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+
+            var series = chart.series.push(new am4charts.ColumnSeries());
+            series.dataFields.valueY = "value";
+            series.dataFields.categoryX = "category";
+            series.columns.template.tooltipText = "{categoryX}: [bold]{valueY}[/]";
+        });
+
+    // Fetch data for request ship
+    fetch("@Url.Action("GetRequestsEstablishment")")
+        .then(response => response.json())
+        .then(result => {
+            const data = [];
+            result.forEach(item => {
+                data.push({ category: item.establishmentName, value: item.count, color: getRandomColor() });
+            });
+
+            // Create column chart
+            var chart = am4core.create("chart-request-establishment", am4charts.XYChart);
+            chart.data = data;
+
+            var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+            categoryAxis.dataFields.category = "category";
+            categoryAxis.renderer.minGridDistance = 30;
+            categoryAxis.renderer.labels.template.wrap = true;
+            categoryAxis.renderer.labels.template.maxWidth = 120;
+
+            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+
+            var series = chart.series.push(new am4charts.ColumnSeries());
+            series.dataFields.valueY = "value";
+            series.dataFields.categoryX = "category";
+            series.columns.template.tooltipText = "{categoryX}: [bold]{valueY}[/]";
+        });
+</script> *@

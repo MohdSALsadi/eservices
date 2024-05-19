@@ -1,0 +1,672 @@
+﻿@using Pattern_of_life.Models.Entity
+
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var locations = (List<Location>)ViewBag.Locations;
+
+}
+
+<style>
+    .error-message{
+        color:red;
+    }
+</style>
+
+<div class="card">
+    <div class="card-header  text-white">
+        <h4 class="card-title">Search Criteria</h4>
+        <a class="heading-elements-toggle"><i class="la la-ellipsis-v font-medium-3"></i></a>
+        <div class="heading-elements">
+            <ul class="list-inline mb-0">
+                <li><a data-action="collapse"><i class="ft-minus"></i></a></li>
+                <li><a data-action="reload"><i class="ft-rotate-cw"></i></a></li>
+                <li><a data-action="expand"><i class="ft-maximize"></i></a></li>
+                <li><a data-action="close"><i class="ft-x"></i></a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="card-content collapse show">
+        <div class="card-body card-dashboard">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="col-md-4 label-control" for="ReferenceNumber">Email:</label>
+                        <div class="col-md-8">
+                            <input type="text" id="txtSearchEmail" class="form-control" placeholder="Email" name="Email">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="col-md-4 label-control" for="Subject">Mobile Number:</label>
+                        <div class="col-md-8">
+                            <input type="text" id="txtSearchMobileNumber" class="form-control" placeholder="Mobile Number" name="MobileNumber">
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="col-md-4 label-control" for="ddlSearchStatus">Status:</label>
+                        <div class="col-md-8">
+                            <select class="form-control" id="ddlSearchStatus" name="ddlSearchStatus">
+                                    <option value="">
+                                       All
+                                    </option>
+                                    <option value="Active">
+                                        Active
+                                    </option>
+                                    <option value="InActive">
+                                        InActive
+                                    </option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="col-md-4 label-control" for="Department">Location:</label>
+                        <div class="col-md-8">
+                         <select class="form-control" id="ddlSearchDepartment">
+                             <option value="" selected>All</option>
+                                @foreach (var item in locations)
+                                {
+                                    <option value="@item.Id">
+                                        @item.Name
+                                    </option>
+                                }
+                            
+                         </select>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6" style="padding:3px;">
+
+                    <a id="btnSearch" class="btn btn-md  btn-primary ml-50 mb-50 mb-sm-0 cursor-pointer" href="#next" role="menuitem">Search</a>
+                    <a id="btnClear" class="btn btn-md  btn-danger ml-50 mb-50 mb-sm-0 cursor-pointer" href="#next" role="menuitem">Clear</a>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="content-overlay"></div>
+
+<section id="pagination">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header text-white">
+                    <h4 class="card-title">Users</h4>
+                    <a class="heading-elements-toggle"><i class="la la-ellipsis-v font-medium-3"></i></a>
+                    <div class="heading-elements">
+                        <ul class="list-inline mb-0">
+                            <li><a data-action="collapse"><i class="ft-minus"></i></a></li>
+                            <li><a data-action="reload"><i class="ft-rotate-cw"></i></a></li>
+                            <li><a data-action="expand"><i class="ft-maximize"></i></a></li>
+                            <li><a data-action="close"><i class="ft-x"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-content collapse show">
+                    <div class="card-body card-dashboard">
+                       
+                        <div class="table-responsive">
+
+
+                            <table id="accounts" class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        @* <th>#</th> *@
+                                        <th>Username</th>
+                                        <th>Email</th>
+                                        @* <th>Name</th> *@
+                                        <th>Mobile Number</th>
+                                        <th>Location</th>
+                                        <th>CreatedOn</th>
+                                        <th>Status</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="sidenav-overlay"></div>
+<div class="drag-target"></div>
+
+
+<div class="modal fade text-left" id="addRolesModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel11" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info white">
+                <h4 class="modal-title white" id="modal-role-label">roles</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="div-roles">
+               
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-assign-roles" class="btn btn-outline-info">Save</button>
+                <button type="button" class="btn grey btn-outline-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade text-left" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel11" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info white">
+                <h4 class="modal-title white" id="modal-change-password-label">change password</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <fieldset class="form-group position-relative has-icon-left mb-1">
+                    <input type="text" name="password" class="form-control form-control-lg input-lg" id="txt-new-password" placeholder="new password">
+                    <div class="form-control-position">
+                        <i class="la la-lock"></i>
+                    </div>
+                    <span class="error-message" id="newpasswordErrorMessage"></span>
+                </fieldset>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-save-change-password" class="btn btn-outline-info">Save</button>
+                <button type="button" class="btn grey btn-outline-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade text-left" id="modifyUserDataModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel11" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info white">
+                <h4 class="modal-title white" id="modal-modify-user-data-label">Edit</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <fieldset class="form-group position-relative has-icon-right mb-1">
+                    <input name="Username" type="text" class="form-control form-control-lg input-lg" id="user-name" placeholder="Username" autocomplete="off">
+                    <div class="form-control-position">
+                        <i class="la la-user"></i>
+                    </div>
+                    <span class="error-message" id="user-name-error"></span>
+                </fieldset>
+                <fieldset class="form-group position-relative has-icon-right mb-1">
+                    <input type="text" name="Name" class="form-control form-control-lg input-lg" id="name" placeholder="Full Name" autocomplete="off">
+                    <div class="form-control-position">
+                        <i class="la la-user"></i>
+                    </div>
+                    <span class="error-message" id="name-error"></span>
+                </fieldset>
+
+                <fieldset class="form-group position-relative has-icon-right mb-1">
+                    <input type="email" name="Email" class="form-control form-control-lg input-lg" id="user-email" placeholder="Email" autocomplete="off">
+                    <div class="form-control-position">
+                        <i class="la la-envelope"></i>
+                    </div>
+                    <span class="error-message" id="user-email-error"></span>
+                </fieldset>
+
+                <fieldset class="form-group position-relative has-icon-right">
+                    <input name="ContactNumber" type="text" class="form-control form-control-lg input-lg" id="contactnumber" placeholder="Mobile Number" autocomplete="off">
+                    <div class="form-control-position">
+                        <i class="la la-mobile"></i>
+                    </div>
+                    <span class="error-message" id="contactnumber-error"></span>
+                </fieldset>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-save-update-user-data" class="btn btn-outline-info">Save</button>
+                <button type="button" class="btn grey btn-outline-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade text-left" id="AssignDepartmentModal" tabindex="-1" role="dialog" aria-labelledby="assignDepartmentModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info white">
+                <h4 class="modal-title white" id="modal-assign-department-modal">Assign Location</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <fieldset class="form-group position-relative has-icon-left mb-1">
+                    @foreach (var item in locations)
+                    {
+                        <input type="radio" name="department" value="@item.Id" />
+                        @item.Name <br/>
+                    }
+                    <input type="radio" name="department" value="-1"/> Udefined
+                </fieldset>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-assign-department" class="btn btn-outline-info">Save</button>
+                <button type="button" class="btn grey btn-outline-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+
+    <script>
+
+        console.log($);
+        $(document).ready(function () {
+
+            loadAccounts();
+
+
+            $('#btnClear').click(function (e) {
+                debugger;
+                e.preventDefault();
+                $('#txtSearchEmail,#txtSearchMobileNumber,#ddlSearchStatus,#ddlSearchDepartment').val('');
+                loadAccounts(null, null, null, null);
+            });
+
+            $('#btnSearch').click(function () {
+                debugger;
+                var mail = $('#txtSearchEmail').val();
+                var mobileNumber = $('#txtSearchMobileNumber').val();
+                var status = $('#ddlSearchStatus').val();
+                var departmentId = $('#ddlSearchDepartment').val();
+                loadAccounts(mail, mobileNumber, status, departmentId);
+
+            });
+
+
+        });
+
+
+        function loadAccounts(email, mobileNumber, status, departmentId) {
+            $('#accounts').DataTable({
+                "paging": true,
+                "pageLength": 10,
+                "searching": false,
+                "processing": true,
+                "serverSide": true,
+                "destroy": true,
+                "ajax": {
+                    "url": "@Url.Action("GetUsers", "Account")",
+                    "type": "POST",
+                    "data": {
+                        "Email": email,
+                        "MobileNumber": mobileNumber,
+                        "Status": status,
+                        "DepartmentId": departmentId
+                    }
+                },
+                "columns": [
+                    // { "data": "id", width: '1%' },
+                    { "data": "userName", width: '10%' },
+                    { "data": "email", width: '15%' },
+                    // { "data": "normalizedUserName", width: '10%' },
+                    { "data": "phoneNumber", width: '3%' },
+                    { "data": "department", width: '3%' },
+                    {
+                        "data": "createdOn",
+                        "width": '3%',
+                        "render": function (data) {
+                            var date = new Date(data);
+                            var formattedDate = formatDate(date);
+                            return formattedDate;
+                        }
+                    },
+                    {
+                        "data": null,
+                        "render": function (data, type, row) {
+                            var badgeClass = row.isActive ? "badge badge-success" : "badge badge-danger";
+                            var statusText = row.isActive ? "Active" : "Inactive";
+                            return `<span class="${badgeClass}">${statusText}</span>`;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function (data, type, row) {
+                            return `
+                    <div class="dropdown">
+                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            options
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" onclick="disableEnableUser('${row.id}')">${row.isActive ? "Deactivate" : "Activate"}</a>
+
+                            <a class="dropdown-item" onclick="changePassword('${row.id}')">Change Password</a>
+                            <a class="dropdown-item" onclick="editRoles('${row.id}')">Roles</a>
+                            <a class="dropdown-item" onclick="assignDepartment('${row.id}')">Set Location</a>
+                            <a class="dropdown-item" onclick="edit('${row.id}')">Edit</a>
+                        </div>
+                    </div>
+                `;
+                        }
+                    }
+                ]
+            });
+        }
+
+
+
+        function edit(id) {
+            $('#modal-modify-user-data-label').html(`Modify User Data #id:${id}`);
+            $('#user-name,#name,#user-email,#contactnumber').val('');
+            $('#btn-save-update-user-data').removeAttr('onclick');
+            $.ajax({
+                url: '@Url.Action("GetUserData")',
+                type: 'GET',
+                data: { userId: id },
+                success: function (result) {
+                    if (result.isSuccess) {
+                        let user = result.data;
+
+                        $('#user-name').val(user.username);
+                        $('#name').val(user.fullName);
+                        $('#user-email').val(user.email);
+                        $('#contactnumber').val(user.mobileNumber);
+                        $('#btn-save-update-user-data').attr("onclick", `updateUserData('${id}')`);
+                        $('#modifyUserDataModal').modal('show');
+                    } else {
+                        toastr.error(result.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error fetching user roles:', error);
+                }
+            });
+        }
+
+
+        function updateUserData(id) {
+            // Input validation
+            let username = $('#user-name').val().trim();
+            let fullName = $('#name').val().trim();
+            let email = $('#user-email').val().trim();
+            let mobileNumber = $('#contactnumber').val().trim();
+
+            // Check if any field is empty
+            if (!username || !fullName || !email || !mobileNumber) {
+                $('#user-name-error').text(username ? '' : 'Username is required');
+                $('#name-error').text(fullName ? '' : 'Full Name is required');
+                $('#user-email-error').text(email ? '' : 'Email is required');
+                $('#contactnumber-error').text(mobileNumber ? '' : 'Mobile Number is required');
+                return;
+            }
+
+            // AJAX call to submit data
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("UpdateUserData")',
+                data: JSON.stringify({
+                    UserId: id,
+                    UserName: username,
+                    FullName: fullName,
+                    MobileNumber: mobileNumber,
+                    Email: email
+                }),
+                contentType: 'application/json',
+                success: function (response) {
+                    if (response.isSuccess) {
+                        $('#accounts').DataTable().ajax.reload();
+                        toastr.success("Operation executed successfully.");
+                        // Optionally, you can close the modal here
+                        $('#modifyUserDataModal').modal('hide');
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert("An error occurred while updating data: " + error);
+                }
+            });
+        }
+
+
+
+        function deleteUser(id) {
+            if (confirm(`Are you sure you want to delete user with Id:${id}`)) {
+                $.ajax({
+                    url: '@Url.Action("DeleteUser")',
+                    type: 'GET', // Change the type to GET
+                    data: { userId: id },
+                    success: function (data) {
+                        if (data.isSuccess) {
+                            toastr.success("Operation executed successfully.");
+                            $('#accounts').DataTable().ajax.reload();
+                        } else {
+                            toastr.error(data.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error fetching user roles:', error);
+                    }
+                });
+            }
+        }
+
+        function assignDepartment(id) {
+            $('input[name="department"]').prop('checked', false);
+
+            $.ajax({
+                url: '@Url.Action("GetUserDepartments")',
+                method: 'GET',
+                data: { userId: id },
+                dataType: 'json',
+                success: function (data) {
+                    debugger;
+                    if (data) {
+                        $('input[name="department"][value="' + data + '"]').prop('checked', true);
+                    }
+                    $('#modal-assign-department-modal').html('Set Department # ' + id);
+                    $('#btn-assign-department').attr("onclick", 'SetDepartment("' + id + '")');
+                    $('#AssignDepartmentModal').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error fetching user departments:', error);
+                }
+            });
+        }
+
+
+
+
+        function SetDepartment(userId) {
+            var departmentId = $('input[name="department"]:checked').val();
+            $.ajax({
+                url: '@Url.Action("SetUserDepartment")',
+                method: 'GET',
+                data: { userId: userId, departmentId: departmentId },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.isSuccess) {
+                        toastr.success("Operation executed successfully.");
+                        $('#accounts').DataTable().ajax.reload();
+                        $('#AssignDepartmentModal').modal('hide');
+                    } else {
+                        toastr.error(data.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error fetching set user Location:', error);
+                }
+            });
+        }
+
+
+        function assignRoles(model) {
+            
+            $.ajax({
+                url: '@Url.Action("AssignRoles", "account")',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(model),
+                success: function (response) {
+                    if (response.isSuccess) {
+                        // The operation was successful
+                        toastr.success("Roles assigned successfully.");
+                        $('#addRolesModal').modal('hide');
+                        // Optionally, perform any additional actions such as refreshing UI
+                    } else {
+                        // The operation failed
+                        toastr.error("Failed to assign roles: " + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    // Handle AJAX error
+                    console.error('Error:', error);
+                    toastr.error("An error occurred while assigning roles.");
+                }
+            });
+        }
+
+
+
+        function editRoles(id) {
+            const divRoles = $('#div-roles');
+            $('#btn-assign-roles').off("click"); // Remove previous click event handler
+            divRoles.empty();
+
+            $.ajax({
+                url: '@Url.Action("GetUserRoles")',
+                method: 'GET',
+                data: { userId: id },
+                dataType: 'json',
+                success: function (data) {
+                    const construction = data.map(e => `
+                                <div class="custom-control custom-checkbox">
+                                    <input data-id=${e.roleId} ${e.hasRole ? "checked" : ""} type="checkbox" class="custom-control-input data-checkbox" id="checkbox${e.roleId}">
+                                    <label class="custom-control-label" for="checkbox${e.roleId}">${e.roleName}</label>
+                                </div>
+                            `).join('');
+
+                    divRoles.html(construction);
+                    $('#modal-role-label').html(`Roles # ${id}`);
+                    $('#btn-assign-roles').on("click", function () {
+                        const checkboxes = document.querySelectorAll('.data-checkbox:checked');
+                        const roleIds = Array.from(checkboxes).map(checkbox => checkbox.dataset.id);
+                        const model = { userId: id, roleIds: roleIds };
+                        assignRoles(model); // Call assignRoles function with the model
+                    });
+                    $('#addRolesModal').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error fetching user roles:', error);
+                }
+            });
+        }
+
+
+
+
+        function disableEnableUser(id) {
+            debugger;
+            $.ajax({
+                url: '@Url.Action("Activate")',
+                method: 'GET',
+                data: { userId: id },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.isSuccess) {
+                        toastr.success("Operation executed successfully.");
+                        $('#accounts').DataTable().ajax.reload();
+                    } else {
+                        toastr.error(data.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error activating user:', error);
+                }
+            });
+        }
+
+
+        function changePassword(id) {
+            $('#txt-new-password').val('');
+            $('#btn-save-change-password').removeAttr("onclick");
+
+            debugger;
+            $('#modal-change-password-label').html(`Change password # ${id}`);
+            $('#btn-save-change-password').attr("onclick", `saveChangePassword('${id}')`);
+            $('#changePasswordModal').modal('show');
+        }
+
+        function saveChangePassword(id) {
+            debugger;
+
+            let password = $('#txt-new-password').val();
+            if (password.trim()) {
+                $.ajax({
+                    url: '@Url.Action("ChangePassword")',
+                    method: 'GET',
+                    data: { userId: id, password: password.trim() },
+                    dataType: 'json',
+                    success: function (data) {
+                        debugger;
+                        if (data.isSuccess) {
+                            toastr.success("Operation executed successfully.");
+                            $('#accounts').DataTable().ajax.reload();
+                            $('#changePasswordModal').modal('hide');
+                        } else {
+                            toastr.error(data.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error changing password:', error);
+                    }
+                });
+            }
+        }
+
+
+        function formatDate(date) {
+            var options = {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            };
+            return date.toLocaleString('en-US', options);
+        }
+
+    </script>
+}

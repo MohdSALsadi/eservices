@@ -1,0 +1,49 @@
+﻿@model Pattern_of_life.Models.Entity.VesselType
+
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">Create New Vessel Type</h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create" method="post">
+                <!-- Form fields for VesselType properties -->
+                <div class="form-group">
+                    <label asp-for="Name"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <button style="margin:5px" type="submit" class="btn btn-primary">Create</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script>
+        $('form').submit(function (e) {
+            e.preventDefault();
+            var formData = $(this).serialize();
+            // Perform AJAX request to create the record
+            $.post('@Url.Action("Create", "VesselType")', formData)
+             .done(function (data) {
+                 Swal.fire(
+                   'Created!',
+                   'Your record has been created.',
+                   'success'
+                 );
+                 window.location.href = '@Url.Action("Index", "VesselType")'; // Redirect to index page after successful creation
+             })
+             .fail(function () {
+                 Swal.fire(
+                   'Error!',
+                   'An error occurred while creating the record.',
+                   'error'
+                 );
+             });
+        });
+    </script>
+}
+

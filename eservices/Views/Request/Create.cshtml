@@ -1,0 +1,209 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var establishments = (List<Establishment>)ViewBag.Establishments;
+}
+
+<style>
+    .invalid-feedback{
+        color:red;
+    }
+</style>
+<section id="pagination">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Create Request</h4>
+                    <a class="heading-elements-toggle"><i class="la la-ellipsis-v font-medium-3"></i></a>
+                    <div class="heading-elements">
+                        <ul class="list-inline mb-0">
+                            <li><a data-action="collapse"><i class="ft-minus"></i></a></li>
+                            <li><a data-action="reload"><i class="ft-rotate-cw"></i></a></li>
+                            <li><a data-action="expand"><i class="ft-maximize"></i></a></li>
+                            <li><a data-action="close"><i class="ft-x"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-content collapse show">
+
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="card">
+                             
+                             
+                                    <div class="card-body">
+
+
+                                        <form id="requestForm" class="form form-horizontal row-separator" enctype="multipart/form-data">
+                                            <div class="form-body">
+                                                <div class="form-group row mx-auto">
+                                                    <label class="col-md-3 label-control" for="originatorInput">Originator</label>
+                                                    <div class="col-md-9">
+                                                        <input type="text" id="originatorInput" class="form-control" placeholder="Originator" name="Originator" required>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group row mx-auto">
+                                                    <label class="col-md-3 label-control" for="subjectInput">Subject</label>
+                                                    <div class="col-md-9">
+                                                        <input type="text" id="subjectInput" class="form-control" placeholder="Subject" name="Subject" required>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group row mx-auto">
+                                                    <label class="col-md-3 label-control" for="referenceInput">Reference Number</label>
+                                                    <div class="col-md-9">
+                                                        <input type="text" id="referenceInput" class="form-control" placeholder="Reference Number" name="ReferenceNumber" required>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group row mx-auto">
+                                                <label class="col-md-3 label-control" for="ddlEstablishment">Ship</label>
+                                                    <div class="col-md-9">
+                                                    <select class="form-control" id="ddlEstablishment" name="EstablishmentId" required>
+                                                        <option value="">Select Ship</option>
+                                                               @foreach (var item in establishments)
+                                                                {
+                                                                    <option value="@item.Id">@item.Name</option>
+                                                                }
+                                                         </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group row mx-auto">
+                                                    <label class="col-md-3 label-control" for="applicabilityInput">Applicability</label>
+                                                    <div class="col-md-9">
+                                                        <input type="text" id="applicabilityInput" class="form-control" name="Applicability" placeholder="Applicability" required>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group row mx-auto">
+                                                    <label class="col-md-3 label-control" for="descriptionTextarea">Description</label>
+                                                    <div class="col-md-9">
+                                                        <textarea class="form-control" id="descriptionTextarea" name="Description" rows="3" placeholder="Description" required></textarea>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group row mx-auto">
+                                                    <label class="col-md-3 label-control" for="taskTypeInput">Task Type</label>
+                                                    <div class="col-md-9">
+                                                        <input type="text" id="taskTypeInput" class="form-control" name="TaskType" placeholder="Task Type" required>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group row mx-auto">
+                                                    <label class="col-md-3 label-control" for="effectTextarea">Effect</label>
+                                                    <div class="col-md-9">
+                                                        <textarea class="form-control" id="effectTextarea" name="Effect" rows="3" placeholder="Effect1" required></textarea>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group row mx-auto">
+                                                    <label class="col-md-3 label-control" for="Effect2">Effect2</label>
+                                                    <div class="col-md-9">
+                                                        <textarea class="form-control" id="effect2Textarea" name="Effect2" rows="3" placeholder="Effect2" required></textarea>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group row mx-auto">
+                                                    <label class="col-md-3 label-control" for="attachmentInput">Attachment</label>
+                                                    <div class="col-md-9">
+                                                        <input type="file" id="attachmentInput" class="form-control-file" name="Attachment" required>
+                                                        <small class="form-text text-muted">Upload file attachment (if any).</small>
+                                                    </div>
+                                                </div>
+
+
+
+                                                <div class="form-group row mx-auto">
+                                                   
+                                                    <div class="col-md-9">
+                                                      <input type="checkbox" name="agreeWithTerms" id="chkbox-agree"/>
+                                                        <label class="label-control" for="Effect2">I agree to the terms and conditions and the privacy policy.</label>
+                                                    </div>
+                                             
+                                                </div>
+
+
+                                            </div>
+
+                                            <div class="form-actions text-center">
+                                                <a  href="@Url.Action("index","request")" id="cancelBtn" class="btn btn-warning mr-1">
+                                                    <i class="la la-remove"></i> Cancel
+                                                </a>
+                                                <button type="button" id="saveBtn" class="btn btn-primary">
+                                                    <i class="la la-check"></i> Send
+                                                </button>
+                                            </div>
+                                        </form>
+
+
+
+
+
+
+                                    </div>
+                              
+                            </div>
+                        </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+   <script>
+        $(document).ready(function () {
+            $('#saveBtn').click(function () {
+                var formIsValid = true;
+                $('#requestForm input, #requestForm textarea, #requestForm select').each(function () {
+                    if ($(this).prop('required') && !$(this).val()) {
+                        formIsValid = false;
+                        $(this).addClass('is-invalid');
+                        $(this).siblings('.invalid-feedback').remove();
+                        var fieldName = $(this).attr('name');
+                        $(this).after('<div class="invalid-feedback">' + fieldName + ' is required.</div>');
+                    } else {
+                        $(this).removeClass('is-invalid');
+                        $(this).siblings('.invalid-feedback').remove();
+                    }
+                });
+
+                if (formIsValid) {
+                    var formData = new FormData($('#requestForm')[0]);
+
+                    if ($('#chkbox-agree').prop('checked')) {
+                        $.ajax({
+                            url: "@Url.Action("SaveRequest", "Request")",
+                            type: 'POST',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function (response) {
+                                if (response.isSuccess) {
+                                    toastr.success("Operation executed successfully.");
+                                    window.location.href = '@Url.Action("index", "request")';
+                                }
+                                else
+                                    if (response.message.includes('IX_Requests_ReferenceNumber')) {
+                                        toastr.error('The reference number is inserted before and must be unique for every data entry into the table.');
+                                    }
+                                    else
+                                    toastr.error(response.message);
+
+                            },
+                            error: function (xhr, status, error) {
+                                console.log(xhr.responseText);
+                            }
+                        });
+                    } else {
+                        toastr.info("You must agree to the terms and conditions and the privacy policy.");
+                    }
+                }
+            });
+        });
+
+   </script>
+}

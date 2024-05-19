@@ -1,0 +1,183 @@
+﻿@model LoginViewModel
+
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="rtl">
+<!-- BEGIN: Head-->
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <meta name="description" content="Modern admin is super flexible, powerful, clean &amp; modern responsive bootstrap 4 admin template with unlimited possibilities with bitcoin dashboard.">
+    <meta name="keywords" content="admin template, modern admin template, dashboard template, flat admin template, responsive admin template, web app, crypto dashboard, bitcoin dashboard">
+    <meta name="author" content="PIXINVENT">
+    <title>Login Page - صفحة الدخول</title>
+    <link rel="apple-touch-icon" href="../../../app-assets/images/ico/apple-icon-120.png">
+    <link rel="shortcut icon" type="image/x-icon" href="../../../app-assets/images/ico/favicon.ico">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i%7CQuicksand:300,400,500,700" rel="stylesheet">
+
+    <!-- BEGIN: Vendor CSS-->
+    <link rel="stylesheet" type="text/css" href="~/vendors/css/vendors-rtl.min.css">
+    <link rel="stylesheet" type="text/css" href="~/vendors/css/forms/icheck/icheck.css">
+    <link rel="stylesheet" type="text/css" href="~/vendors/css/forms/icheck/custom.css">
+    <!-- END: Vendor CSS-->
+    <!-- BEGIN: Theme CSS-->
+    <link rel="stylesheet" type="text/css" href="~/css/rtl/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="~/css/rtl/bootstrap-extended.css">
+    <link rel="stylesheet" type="text/css" href="~/css/rtl/colors.css">
+    <link rel="stylesheet" type="text/css" href="~/css/rtl/components.css">
+    <link rel="stylesheet" type="text/css" href="~/css/rtl/custom-rtl.css">
+    <!-- END: Theme CSS-->
+    <!-- BEGIN: Page CSS-->
+    <link rel="stylesheet" type="text/css" href="~/css/rtl/core/menu/menu-types/vertical-menu.css">
+    <link rel="stylesheet" type="text/css" href="~/css/rtl/core/colors/palette-gradient.css">
+    <link rel="stylesheet" type="text/css" href="~/css/rtl/pages/login-register.css">
+    <!-- END: Page CSS-->
+    <!-- BEGIN: Custom CSS-->
+    <link href="~/css/style-rtl.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap">
+
+
+
+
+    <!-- END: Custom CSS-->
+
+    <style>
+        /* Add the CSS styles here */
+        .is-invalid {
+            border-color: #dc3545 !important; /* Red border */
+        }
+
+        .is-valid {
+            border-color: #28a745 !important; /* Green border */
+        }
+
+        .invalid-feedback {
+            color: #dc3545; /* Red color */
+            font-size: 12px;
+            text-align: left;
+        }
+
+        body {
+            font-family: 'Quicksand';
+            background-color: lightgray;
+        }
+
+        .card-subtitle {
+            font-family: 'Quicksand' !important;
+        }
+
+    </style>
+
+
+
+</head>
+<!-- END: Head-->
+<!-- BEGIN: Body-->
+
+<body class="vertical-layout vertical-menu 1-column   blank-page" data-open="click" data-menu="vertical-menu" data-col="1-column">
+    <!-- BEGIN: Content-->
+    <div class="app-content content">
+        <div class="content-overlay"></div>
+        <div class="content-wrapper">
+            <div class="content-header row">
+            </div>
+            <div class="content-body">
+                <section class="row flexbox-container">
+                    <div class="col-12 d-flex align-items-center justify-content-center">
+                        <div class="col-lg-4 col-md-8 col-10 box-shadow-2 p-0">
+                            <div class="card border-grey border-lighten-3 m-0">
+                                <div class="card-header border-0">
+                                    <div class="card-title text-center">
+                                        <div class="">
+                                            <img src="~/images/logo/LogoRno.png" alt="branding logo" style="width:30%;height:30%;">
+                                        </div>
+                                    </div>
+                                    <h6 class="card-subtitle line-on-side text-muted text-center font-small-3 pt-2">
+                                        <span><h5>ALTERATION AND ADDITIONAL PROPOSAL</h5></span>
+                                    </h6>
+                                </div>
+                                <div class="card-content">
+                                    <div class="card-body">
+                                        <form asp-action="Login" method="post" class="form-horizontal form-simple" id="loginForm" onsubmit="return validateForm()" dir="ltr">
+                                            <fieldset class="form-group position-relative has-icon-right mb-0">
+
+                                                <input name="returnUrl" type="hidden" value="@ViewData["returnUrl"]" />
+
+                                                <input asp-for="UserName" class="form-control" id="username" placeholder="Username or Email - أسم المستخدم أو البريد">
+                                                <div class="form-control-position">
+                                                    <i class="la la-user"></i>
+                                                </div>
+                                                <div class="invalid-feedback" id="username-error">username required</div>
+                                            </fieldset>
+                                            <fieldset class="form-group position-relative has-icon-right">
+                                                <input asp-for="Password" type="password" class="form-control" id="password" placeholder="Password - كلمة السر">
+                                                <div class="form-control-position">
+                                                    <i class="la la-key"></i>
+                                                </div>
+                                                <div class="invalid-feedback" id="password-error">password required</div>
+                                            </fieldset>
+                                            @if (!ViewData.ModelState.IsValid)
+                                            {
+                                                <span style="color:red;text-align:left;float:left;margin-top:-6%;margin-bottom:2%;" id="name-error">Invalid username or password</span>
+
+                                            }
+
+                                            <button type="submit" class="btn btn-info btn-block"><i class="ft-unlock"></i>Login - الدخول</button>
+
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                     <div class="alert alert-info" role="alert" >
+                                    لا يوجد لديك حساب ؟ التسجيل هنا  
+                                        <br /> Don't have an account? register here
+                                        <br />
+                                        <br />
+                                        <div class="">
+                                            <p class="text-center m-0"><a href="@Url.Action("register","account")" class="card-link btn btn-success">Register - تسجيل مستخدم جديد</a></p>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function validateForm() {
+            debugger;
+            var fields = ['username', 'password'];
+            var isValid = true;
+
+            fields.forEach(field => {
+                var value = document.getElementById(field).value;
+                var errorElement = document.getElementById(field + "-error");
+                var element = document.getElementById(field);
+
+                if (value === "") {
+                    element.classList.add("is-invalid");
+                    errorElement.style.display = "block";
+                    isValid = false;
+                } else {
+                    element.classList.remove("is-invalid");
+                    element.classList.add("is-valid");
+                    errorElement.style.display = "none";
+                }
+            });
+            return isValid;
+        }
+
+    </script>
+
+</body>
+<!-- END: Body-->
+
+</html>

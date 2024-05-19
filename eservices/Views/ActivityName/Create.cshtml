@@ -1,0 +1,51 @@
+﻿@model Pattern_of_life.Models.Entity.ActivityName
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header  text-white">
+            <h5 class="mb-0">Activity Name</h5>
+        </div>
+        <div class="card-body">
+<form asp-action="Create" method="post">
+    <!-- Form fields for Activity Name properties -->
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <button style="margin:5px" type="submit" class="btn btn-success">Create</button>
+</form>
+</div>
+</div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script>
+        $('form').submit(function (e) {
+            e.preventDefault();
+            var formData = $(this).serialize();
+            // Perform AJAX request to create the record
+            $.post('@Url.Action("Create", "ActivityName")', formData)
+                .done(function (data) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'ActivityNamee has been created.',
+                        icon: 'success',
+                        timer: 5000, // Display alert for 5 seconds
+                        timerProgressBar: true,
+                        onClose: () => {
+                            window.location.href = '@Url.Action("Index", "ActivityName")';
+                        }
+                    });
+                })
+                .fail(function () {
+                    Swal.fire(
+                        'Error!',
+                        'An error occurred while creating the record.',
+                        'error'
+                    );
+                });
+        });
+    </script>
+}
+

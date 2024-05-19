@@ -1,0 +1,16 @@
+﻿@font-face {
+    font-family: 'Rubik';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Rubik Regular'), local('Rubik-Regular'), url(rubik.woff2) format('woff2');
+}
+
+
+
+
+@font-face {
+    font-family: 'Quicksand';
+    font-style: normal;
+    font-weight: 300;
+    src: local('Quicksand Light'), local('Quicksand-Light'), url('Quicksand.woff2') format('woff2');
+}

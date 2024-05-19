@@ -1,0 +1,95 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+        <div class="content-overlay"></div>
+       
+         
+          
+               
+                <section id="pagination">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Alternative pagination</h4>
+                                    <a class="heading-elements-toggle"><i class="la la-ellipsis-v font-medium-3"></i></a>
+                                    <div class="heading-elements">
+                                        <ul class="list-inline mb-0">
+                                            <li><a data-action="collapse"><i class="ft-minus"></i></a></li>
+                                            <li><a data-action="reload"><i class="ft-rotate-cw"></i></a></li>
+                                            <li><a data-action="expand"><i class="ft-maximize"></i></a></li>
+                                            <li><a data-action="close"><i class="ft-x"></i></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="card-content collapse show">
+                                    <div class="card-body card-dashboard">
+                                        <p class="card-text">The default page control presented by DataTables (forward and backward buttons with up to 7 page numbers in-between) is fine for most situations, but there are cases where you may wish to customise the options presented to the end user. This is done through DataTables' extensible pagination mechanism, the pagingType option.</p>
+                                        <div class="table-responsive">
+                                        
+                                           
+                                            <table id="abdelrahman" class="table table-striped table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>id</th>
+                                                        <th>name</th>
+                                                        <th>action</th>
+                                                    </tr>
+                                                </thead>
+                                            </table>
+                                         
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+              
+             
+                
+
+          
+       
+  
+    
+
+    <div class="sidenav-overlay"></div>
+    <div class="drag-target"></div>
+
+   
+
+    
+   
+
+    @section Scripts{
+       
+        <script>
+            debugger;
+            console.log($);
+            $(document).ready(function () {
+                $('#abdelrahman').DataTable({
+                    "processing": true,
+                    "serverSide": true,
+                    "ajax": {
+                        "url": "@Url.Action("GetData", "DataTable")",
+                        "type": "POST"
+                    },
+                    "columns":[
+                        {"data":"id"},
+                        { "data": "name" },
+                    {
+                        "data": null,
+                        "render": function (data, type, row) {
+                            return '<button class="action-btn btn-primary" data-id="' + row.id + '">Action</button>';
+                        }
+                    }
+                    ]
+                  
+                });
+            });
+        </script>
+    }

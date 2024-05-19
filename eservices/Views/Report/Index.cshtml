@@ -1,0 +1,124 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+   
+}
+
+
+
+<div class="card">
+    <div class="card-header">
+        <h4 class="card-title">Search Criteria</h4>
+        <a class="heading-elements-toggle"><i class="la la-ellipsis-v font-medium-3"></i></a>
+        <div class="heading-elements">
+            <ul class="list-inline mb-0">
+                <li><a data-action="collapse"><i class="ft-minus"></i></a></li>
+                <li><a data-action="reload"><i class="ft-rotate-cw"></i></a></li>
+                <li><a data-action="expand"><i class="ft-maximize"></i></a></li>
+                <li><a data-action="close"><i class="ft-x"></i></a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="card-content collapse show">
+        <div class="card-body card-dashboard">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="col-md-4 label-control" for="ReferenceNumber">Reference Number:</label>
+                        <div class="col-md-8">
+                            <input type="text" id="txtReferenceNumber" class="form-control" placeholder="Reference Number" name="ReferenceNumber">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="col-md-4 label-control" for="Subject">Subject:</label>
+                        <div class="col-md-8">
+                            <input type="text" id="txtSubject" class="form-control" placeholder="Subject" name="Subject">
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="col-md-4 label-control" for="ddlStatus">Status:</label>
+                        <div class="col-md-8">
+                            <select class="form-control" id="ddlStatus" name="ddlStatus">
+                                <option value="">ALL</option>
+                                <option value="APPROVED">APPROVED</option>
+                                <option value="REJECTED">REJECTED</option>
+                                <option value="NEW">NEW</option>
+                                <option value="PENDING">PENDING</option>
+                                <option value="IN_PROGRESS">IN_PROGRESS</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="col-md-4 label-control" for="Originator">Originator:</label>
+                        <div class="col-md-8">
+                            <input type="text" id="txtOriginator" class="form-control" placeholder="Originator" name="Originator">
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <a id="btnSearch" class="btn btn-md  btn-primary ml-50 mb-50 mb-sm-0 cursor-pointer" href="#next" role="menuitem">Print</a>
+                    <a id="btnClear" class="btn btn-md  btn-danger ml-50 mb-50 mb-sm-0 cursor-pointer" href="#next" role="menuitem">Clear</a>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+   <script>
+
+        $(document).ready(function () {
+
+            $('#btnClear').click(function (e) {
+                debugger;
+                e.preventDefault();
+                $('#txtReferenceNumber,#txtSubject').val('');
+                loadRequests(null, null, null, null);
+            });
+
+
+            $('#btnSearch').click(function () {
+                var referenceNumber = $('#txtReferenceNumber').val().trimEnd();
+                var subject = $('#txtSubject').val().trimEnd();
+                var status = $('#ddlStatus').val().trimEnd();
+                var originator = $('#txtOriginator').val().trimEnd();
+
+                // Construct the URL with parameters
+                var url = '@Url.Action("Print", "Report")'; 
+                url += '?referenceNumber=' + referenceNumber;
+                url += '&subject=' + subject;
+                url += '&status=' + status;
+                url += '&originator=' + originator;
+
+                // Redirect to the URL
+                window.location.href = url;
+            });
+
+
+        });
+   </script>
+}

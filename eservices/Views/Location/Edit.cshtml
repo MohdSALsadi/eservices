@@ -1,0 +1,46 @@
+﻿@model Pattern_of_life.Models.Entity.Location
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header  text-white">
+            <h5 class="mb-0">Location</h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                <!-- Form fields for Location properties -->
+                <div class="form-group">
+                    <label asp-for="Name"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary">Update</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script>
+        $('form').submit(function (e) {
+            e.preventDefault();
+            var formData = $(this).serialize();
+            // Perform AJAX request to update the record
+            $.post('@Url.Action("Edit", "Location")', formData)
+                .done(function (data) {
+                    Swal.fire(
+                        'Updated!',
+                        'Your record has been updated.',
+                        'success'
+                    );
+                    window.location.href = '@Url.Action("Index", "Location")'; // Redirect to index page after successful update
+                })
+                .fail(function () {
+                    Swal.fire(
+                        'Error!',
+                        'An error occurred while updating the record.',
+                        'error'
+                    );
+                });
+        });
+    </script>
+}

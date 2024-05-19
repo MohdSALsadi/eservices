@@ -1,0 +1,74 @@
+﻿@model Pattern_of_life.Models.Entity.FlagState
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header  text-white">
+            <h5 class="mb-0">Flag State</h5>
+        </div>
+        <div class="card-body">
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+    <!-- Form fields for FlagState properties -->
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <!-- Display current image -->
+    <div class="form-group">
+        <label>Current Flag Image:</label>
+        @if (!string.IsNullOrEmpty(Model.FlagImagePath))
+        {
+            <img src="@Url.Content(Model.FlagImagePath)" class="img-thumbnail" alt="Flag Image" />
+        }
+        else
+        {
+            <span>No image available</span>
+        }
+    </div>
+
+    <!-- Add form fields for FlagImagePath -->
+    <div class="form-group">
+        <label asp-for="FlagImagePath"></label>
+        <input type="file" id="flagImageInput" name="FlagImage" accept="image/*" class="form-control-file" />
+        <span asp-validation-for="FlagImagePath" class="text-danger"></span>
+    </div>
+    <button style="margin:5px" type="submit" class="btn btn-primary">Update</button>
+</form>
+</div>
+</div>
+</div>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script>
+        $('form').submit(function (e) {
+            e.preventDefault();
+            var formData = new FormData($(this)[0]);
+            // Perform AJAX request to update the record
+            $.ajax({
+                url: '@Url.Action("Edit", "FlagState")',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'FlagState has been updated.',
+                        icon: 'success',
+                        timer: 5000, // Display alert for 5 seconds
+                        timerProgressBar: true,
+                        onClose: () => {
+                            window.location.href = '@Url.Action("Index", "FlagState")';
+                        }
+                    });
+                },
+                error: function () {
+                    Swal.fire(
+                        'Error!',
+                        'An error occurred while updating the record.',
+                        'error'
+                    );
+                }
+            });
+        });
+    </script>
+}

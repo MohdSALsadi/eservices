@@ -1,0 +1,127 @@
+﻿@model Pattern_of_life.Models.ShipActivityViewModel
+<div class="card  mb-3">
+    <div class="card-header  text-white">
+        <h5 class="mb-0">Ship Activitys</h5>
+    </div>
+    <div class="card-body">
+<form asp-action="Edit" method="post">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label asp-for="DTG">Date and Time</label>
+                <input asp-for="DTG" class="form-control" />
+                <span asp-validation-for="DTG" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Latitude">Latitude</label>
+                <input asp-for="Latitude" class="form-control" />
+                <span asp-validation-for="Latitude" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Speed">Speed</label>
+                <input asp-for="Speed" class="form-control" />
+                <span asp-validation-for="Speed" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Course">Course</label>
+                <input asp-for="Course" class="form-control" />
+                <span asp-validation-for="Course" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IMO">IMO</label>
+                <input asp-for="IMO" class="form-control" />
+                <span asp-validation-for="IMO" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="POB">POB</label>
+                <input asp-for="POB" class="form-control" />
+                <span asp-validation-for="POB" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label asp-for="Name">Name</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Longitude">Longitude</label>
+                <input asp-for="Longitude" class="form-control" />
+                <span asp-validation-for="Longitude" class="text-danger"></span>
+            </div>
+
+
+
+            <div class="form-group">
+                <label asp-for="Remarks">Remarks</label>
+                <input asp-for="Remarks" class="form-control" />
+                <span asp-validation-for="Remarks" class="text-danger"></span>
+            </div>
+
+
+            <div class="form-group">
+                <label asp-for="VesselTypeID">Vessel Type</label>
+                <select asp-for="VesselTypeID" class="form-control" asp-items="@(new SelectList(Model.VesselTypes, "ID", "Name"))" required>
+                    <option value="">Select a Vessel Type</option>
+                </select>
+                <span asp-validation-for="VesselTypeID" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="FlagStateID">Flag State</label>
+                <select asp-for="FlagStateID" class="form-control" asp-items="@(new SelectList(Model.FlagStates, "ID", "Name"))" required>
+                    <option value="">Select a Flag State</option>
+                </select>
+                <span asp-validation-for="FlagStateID" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ActivityNameID">Activity Name</label>
+                <select asp-for="ActivityNameID" class="form-control" asp-items="@(new SelectList(Model.ActivityNames, "ID", "Name"))" required>
+                    <option value="">Select an Activity Name</option>
+                </select>
+                <span asp-validation-for="ActivityNameID" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+            <div class="row">
+                <div style="margin:5px" class="col-12 text-center">
+    <button style="margin:5px" type="submit" class="btn btn-primary">Update</button>
+    </div>
+    </div>
+</form>
+</div>
+</div>
+<
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script>
+        $('form').submit(function (e) {
+            e.preventDefault();
+            var formData = $(this).serialize();
+            // Perform AJAX request to update the record
+            $.post('@Url.Action("Edit", "ShipActivity")', formData)
+                .done(function (data) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'FlagState has been updated.',
+                        icon: 'success',
+                        timer: 5000, // Display alert for 5 seconds
+                        timerProgressBar: true,
+                        onClose: () => {
+                            window.location.href = '@Url.Action("Index", "ShipActivity")';
+                        }
+                    });
+                })
+            window.location.href = '@Url.Action("Index", "ShipActivity")'; // Redirect to index page after successful update
+        })
+            .fail(function () {
+                Swal.fire(
+                    'Error!',
+                    'An error occurred while updating the record.',
+                    'error'
+                );
+            });
+                                });
+    </script>
+}

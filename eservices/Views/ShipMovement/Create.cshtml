@@ -1,0 +1,118 @@
+﻿@model Pattern_of_life.Models.ShipMovementViewModel
+
+<div class="card">
+    <div class="card-header  text-white">
+        <h5 class="mb-0">Create Ship Movement</h5>
+    </div>
+    <div class="card-body">
+
+        <form asp-action="Create" id="createForm">
+            <div class="form-group">
+                <label asp-for="VesselName"></label>
+                <input asp-for="VesselName" class="form-control" />
+                <span asp-validation-for="VesselName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IMO"></label>
+                <input asp-for="IMO" class="form-control" />
+                <span asp-validation-for="IMO" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VesselTypeID">Vessel Type</label>
+                <select asp-for="VesselTypeID" class="form-control" asp-items="@(new SelectList(Model.VesselTypes, "ID", "Name"))" required>
+                    <option value="">-- Select a Vessel Type --</option>
+                </select>
+                <span asp-validation-for="VesselTypeID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FlagStateID">Flag State</label>
+                <select asp-for="FlagStateID" class="form-control" asp-items="@(new SelectList(Model.FlagStates, "ID", "Name"))" required>
+                    <option value="">-- Select a Flag State --</option>
+                </select>
+                <span asp-validation-for="FlagStateID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProposeOfArrival"></label>
+                <input asp-for="ProposeOfArrival" class="form-control" />
+                <span asp-validation-for="ProposeOfArrival" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Berth"></label>
+                <input asp-for="Berth" class="form-control" />
+                <span asp-validation-for="Berth" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EAT"></label>
+                <input asp-for="EAT" type="datetime-local" class="form-control" />
+                <span asp-validation-for="EAT" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ETD"></label>
+                <input asp-for="ETD" type="datetime-local" class="form-control" />
+                <span asp-validation-for="ETD" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ExtraDetails"></label>
+                <textarea asp-for="ExtraDetails" class="form-control"></textarea>
+                <span asp-validation-for="ExtraDetails" class="text-danger"></span>
+            </div>
+            <div class="row">
+                <div style="margin:5px" class="col-12 text-center">
+            <button  type="submit" class="btn btn-success">Create</button>
+            </div>
+            </div>
+            
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(document).ready(function () {
+            $('#createShipMovementForm').submit(function (e) {
+                e.preventDefault();
+
+                var form = $(this);
+                var formData = new FormData(form[0]); // Create FormData object
+                $.ajax({
+                    url: form.attr('action'),
+                    type: 'POST',
+                    data: formData,
+                    // contentType: false, // Don't set content type
+                    // processData: false, // Don't process data
+                    success: function (data) {
+                        // Display success message
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'Ship Movement has been created.',
+                            icon: 'success',
+                            timer: 5000, // Display alert for 5 seconds
+                            timerProgressBar: true,
+                            onClose: () => {
+                                window.location.href = '@Url.Action("Index", "shipMovement")';
+                            }
+                        });
+                    },
+                    error: function () {
+                        // Display error message
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Failed to create ship movement!',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                });
+            });
+
+
+
+
+
+
+        });
+    </script>
+}

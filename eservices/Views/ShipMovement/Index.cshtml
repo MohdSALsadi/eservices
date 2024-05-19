@@ -1,0 +1,107 @@
+﻿@model IEnumerable<Pattern_of_life.Models.Entity.ShipMovement>
+
+
+<dv class="container mt-2">
+    <div class="card">
+        <div class="card-header  text-white">
+            <h5 class="mb-0"> Ship Movements</h5>
+        </div>
+        <div class="card-body">
+
+            <div class="text-center">
+                <a href="@Url.Action("Create", "ShipMovement")" class="btn btn-outline-info col-6 mb-3"><i class="bi bi-plus-circle-dotted"></i> Add </a>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Vessel Name</th>
+                        <th>IMO</th>
+                        <th>Vessel Type</th>
+                        <th>Flag State</th>
+                        <th>Purpose of Arrival</th>
+                        <th>Berth</th>
+                        <th>EAT</th>
+                        <th>ETD</th>
+                        <th>Extra Details</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.VesselName</td>
+                            <td>@item.IMO</td>
+                            <td>@(item.VesselType != null ? item.VesselType.Name : "N/A")</td>
+                            <td>@(item.FlagState != null ? item.FlagState.Name : "N/A")</td>
+                            <td>@item.ProposeOfArrival</td>
+                            <td>@item.Berth</td>
+                            <td>@item.EAT.ToShortDateString()</td>
+                            <td>@item.ETD.ToShortDateString()</td>
+                            <td>@item.ExtraDetails</td>
+                            <td>
+                                <button class="btn btn-primary editBtn" data-id="@item.Id"> <i class="la la-pencil-square"></i> <!-- Grgich icon for edit --></button>
+                                <button class="btn btn-danger deleteBtn" data-id="@item.Id">  <i class="la la-trash"></i> <!-- Grgich icon for delete --></button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</dv>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(document).ready(function () {
+            $('.editBtn').click(function () {
+                var id = $(this).data('id');
+                window.location.href = '@Url.Action("Edit", "ShipMovement")' + '?id=' + id;
+            });
+
+            $('.deleteBtn').click(function () {
+                var id = $(this).data('id');
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'You will not be able to recover this ship movement!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '@Url.Action("DeleteConfirmed", "ShipMovement")' + '?id=' + id,
+                            type: 'POST',
+                            success: function () {
+                                // Display success message
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Deleted!',
+                                    text: 'Ship movement has been deleted.',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                                // Refresh the page
+                                window.location.reload();
+                            },
+                            error: function () {
+                                // Display error message
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Failed to delete ship movement!',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

@@ -1,0 +1,95 @@
+﻿@model Pattern_of_life.Models.ShipMovementViewModel
+
+
+<div class="card  mb-3">
+    <div class="card-header  text-white">
+        <h5 class="mb-0">Edit Ship Movement</h5>
+    </div>
+    <div class="card-body">
+<form asp-action="Edit" method="post">
+    <div class="form-group">
+        <label asp-for="VesselName"></label>
+        <input asp-for="VesselName" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="IMO"></label>
+        <input asp-for="IMO" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="VesselTypeID">Vessel Type</label>
+        <select asp-for="VesselTypeID" class="form-control" asp-items="@(new SelectList(Model.VesselTypes, "ID", "Name"))" required>
+            <option value="">Select a Vessel Type</option>
+        </select>
+        <span asp-validation-for="VesselTypeID" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="FlagStateID">Flag State</label>
+        <select asp-for="FlagStateID" class="form-control" asp-items="@(new SelectList(Model.FlagStates, "ID", "Name"))" required>
+            <option value="">Select a Flag State</option>
+        </select>
+        <span asp-validation-for="FlagStateID" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ProposeOfArrival"></label>
+        <input asp-for="ProposeOfArrival"  class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Berth"></label>
+        <input asp-for="Berth" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="EAT"></label>
+        <input asp-for="EAT" type="datetime-local" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="ETD"></label>
+        <input asp-for="ETD" type="datetime-local" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="ExtraDetails"></label>
+        <textarea asp-for="ExtraDetails" class="form-control"></textarea>
+    </div>
+            <div class="row">
+                <div style="margin:5px" class="col-12 text-center">
+    <button type="submit" class="btn btn-primary">Update</button>
+    </div>
+    </div>
+</form>
+</div>
+</div>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(document).ready(function () {
+            $('form').submit(function (e) {
+                e.preventDefault();
+
+                var formData = $(this).serialize();
+                // Perform AJAX request to update the record
+                $.post('@Url.Action("Edit", "ShipMovement")', formData)
+                    .done(function (data) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'Ship movement updated successfully!',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                        // Optionally redirect to index page or do other actions
+                    },
+                    error: function () {
+                        // Display error message
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Failed to update ship movement!',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

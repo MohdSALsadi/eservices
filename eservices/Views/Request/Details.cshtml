@@ -1,0 +1,625 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var request = (Request)ViewBag.Request;
+    var requestRedirectionResult = (List<RequestRedirectViewModel>)ViewBag.RequestRedirectionResult;
+    var isRequestPending = (bool)ViewBag.IsRequestPending;
+    var IsUserAbleToTakeDecision = (bool)ViewBag.IsUserAbleToTakeDecision;
+    var departmentActions = (List<DepartmentActionViewModel>)ViewBag.DepartmentActions;
+    var user = (System.Security.Claims.ClaimsIdentity)User.Identity;
+    var isAdmin = user.Claims.Any(c => c.Type == System.Security.Claims.ClaimTypes.Role && (c.Value == "Admin" || c.Value=="Manager"));
+
+}
+@functions {
+    public string FormatRequestStatus(string status)
+    {
+        switch (status)
+        {
+            case "NEW":
+                return "<p class=\"badge badge-success\">NEW</p>";
+            case "IN_PROGRESS":
+                return "<p class=\"badge badge-primary\">IN_PROGRESS</p>";
+            case "PENDING":
+                return "<p class=\"badge badge-warning\">PENDING</p>";
+            case "COMPLETED":
+                return "<p class=\"badge badge-success\">COMPLETED</p>";
+            case "APPROVED":
+                return "<p class=\"badge badge-success\">APPROVED</p>";
+            case "REJECTED":
+                return "<p class=\"badge badge-danger\">REJECTED</p>";
+            default:
+                return "";
+        }
+    }
+}
+
+
+
+<div class="card">
+    <input type="hidden" id="hfRequestId" value="@Context.Request.Query["id"]" />
+
+    <div class="card-header">
+        <h4 class="card-title">Details</h4>
+        <a class="heading-elements-toggle"><i class="la la-ellipsis-v font-medium-3"></i></a>
+        <div class="heading-elements">
+            <ul class="list-inline mb-0">
+                <li><a data-action="collapse"><i class="ft-minus"></i></a></li>
+                <li><a data-action="reload"><i class="ft-rotate-cw"></i></a></li>
+                <li><a data-action="expand"><i class="ft-maximize"></i></a></li>
+                <li><a data-action="close"><i class="ft-x"></i></a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="card-body">
+
+   
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="label-header">Reference Number :  </label>
+                    <label>@request.ReferenceNumber</label>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+            <div class="form-group">
+                    <label class="label-header">Subject :  </label>
+                <label>@request.Subject</label>
+            </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="label-header">Originator :  </label>
+                    <label>@request.Originator</label>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="label-header">Establishment :  </label>
+                    <label>@request.Establishment.Name</label>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="label-header">Applicability :  </label>
+                    <label>@request.Applicability</label>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="label-header">Task Type :  </label>
+                    <label>@request.TaskType</label>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="label-header">Description :  </label>
+                    <label>@request.Description</label>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="label-header">Attachment : </label>
+                    <a target="_blank" href="/uploads/@request.AttachmentUrl">Link</a>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="label-header">Effect :  </label>
+                    <label>@request.Effect</label>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="label-header">Effect2 : </label>
+                    <label>@request.Effect2</label>
+                </div>
+            </div>
+        </div>
+
+
+      
+
+        <div class="row">
+           
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label class="label-header">Status : </label>
+                    @Html.Raw(FormatRequestStatus(request.Status))
+                </div>
+            </div>
+        </div>
+
+
+
+        @if (request.Status == "APPROVED" || request.Status == "REJECTED")
+        {
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="label-header">@((request.Status == "APPROVED") ? "Approval Date" : "Rejection Date") : </label>
+                        <label>@request.UpdateOn</label>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="label-header">@((request.Status == "APPROVED") ? "Approval Comment" : "Rejection Notes") : </label>
+                        <label>@((request.Status == "APPROVED") ? request.Comment : request.RejectionNotes)</label>
+                    </div>
+                </div>
+            </div>
+        }
+
+
+
+
+
+            @if (isAdmin && (request.Status == "IN_PROGRESS" || request.Status == "NEW"))
+            {
+
+                <div class="col-md-7">
+                <label>Comment</label>
+                <textarea class="form-control" id="txt-final-comment" rows="3"></textarea>
+                <span id="span-validate-final-comment" style='color:red;display:none;'>this field is required *</span>
+                <br/>
+
+                    </div>
+                <div class="col-md-6">
+
+                    <a onclick="approve()" class="btn btn-md  btn-success ml-50 mb-50 mb-sm-0 cursor-pointer" href="#next" role="menuitem">Complete</a>
+                    <a onclick="reject()" class="btn btn-md  btn-danger ml-50 mb-50 mb-sm-0 cursor-pointer" href="#next" role="menuitem">Reject</a>
+
+                </div>
+            }
+           
+        </div>
+    </div>
+
+
+@if (@* isAdmin && *@ requestRedirectionResult.Count > 0)
+{
+    @foreach (var departmentGroup in requestRedirectionResult.GroupBy((Func<RequestRedirectViewModel, string>)(r => r.DepartmentName)))
+    {
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title" style="text-decoration:underline;">Department | @(departmentGroup.First().DepartmentName ?? "---")</h4>
+            </div>
+            <div class="card-body">
+                @foreach (var actionGroup in departmentGroup.GroupBy((Func<RequestRedirectViewModel, string>)(r => $"{r.CheckoutByUser}-{r.CheckoutDate}")))
+                {
+                    <div class="">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="label-header">CheckoutByUser :  </label>
+                                    <label>@(actionGroup.First().CheckoutByUser ?? "---")</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="label-header">CheckoutDate:  </label>
+                                    <label>@(actionGroup.First().CheckoutDate)</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            @foreach (var item in actionGroup)
+                            {
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="label-header">Action :  </label>
+                                        <label>@(item.Action ?? "---")</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="label-header">Decision:  </label>
+                                        <label>@(item.Decision ?? "---")</label>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="label-header">UpdatedOn :  </label>
+                                    <label>@(actionGroup.First().UpdatedOn )</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="label-header">UpdatedBy:  </label>
+                                    <label>@(actionGroup.First().UpdatedBy ?? "---")</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+}
+
+
+@if (isRequestPending && IsUserAbleToTakeDecision && departmentActions?.Count>0 )
+{
+    <br />
+    <section class="formatter">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Decision</h4>
+                        <a class="heading-elements-toggle"><i class="la la-ellipsis-h font-medium-3"></i></a>
+                        <div class="heading-elements">
+                            <ul class="list-inline mb-0">
+                                <li><a data-action="collapse"><i class="ft-minus"></i></a></li>
+                                <li><a data-action="reload"><i class="ft-rotate-cw"></i></a></li>
+                                <li><a data-action="expand"><i class="ft-maximize"></i></a></li>
+                                <li><a data-action="close"><i class="ft-x"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card-content collapse show">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-xl-6 col-lg-12">
+
+                                    @foreach (var item in departmentActions.GroupBy(e => e.Group).ToList())
+                                    {
+                                        @if (!string.IsNullOrEmpty(item.Key))
+                                            {
+                                                <h5>
+                                                    @item.Key
+                                                </h5>
+                                                <div class="row">
+                                                @foreach (var departmentAction in item)
+                                                {
+
+
+
+                                                    @if (departmentAction.ControlName == "Checkbox")
+                                                    {
+
+                                                        <div class="col-md-3">
+                                                            <div class="form-check" style="zoom:1.3;">
+                                                                <input type="checkbox" class="form-check-input" id="@departmentAction.Label">
+                                                                <label class="form-check-label" for="exampleCheck1">@departmentAction.Label</label>
+                                                            </div>
+
+                                                        </div>
+
+                                                    }
+                                                    else if (departmentAction.ControlName == "Radio")
+                                                    {
+                                                        var items = departmentAction.Options.Split(',');
+
+
+                                                        <fieldset>
+                                                            <h5>
+                                                                @(departmentAction.Alias??departmentAction.Label)
+                                                            </h5>
+                                                            <br />
+                                                            @foreach (var e in items)
+                                                            {
+                                                                <input type="radio" name="@departmentAction.Label" value="@e">
+                                                                <label class="form-check-label" for="exampleCheck1">@e</label>
+                                                            }
+                                                        </fieldset>
+
+
+                                                    }
+                                                    else if (departmentAction.ControlName == "Textarea")
+                                                    {
+                                                        <fieldset>
+                                                            <h5>
+                                                                @(departmentAction.Alias ?? departmentAction.Label)
+                                                            </h5>
+
+                                                            <div class="form-group">
+                                                                <textarea class="form-control" id="@departmentAction.ControlName" placeholder="@departmentAction.PlaceHolder" required></textarea>
+                                                            </div>
+                                                        </fieldset>
+                                                    }
+                                                    else if (departmentAction.ControlName == "Dropdown")
+                                                    {
+                                                        var items = departmentAction.Options.Split(',');
+
+                                                        <fieldset>
+                                                            <h5>
+                                                                @(departmentAction.Alias ?? departmentAction.Label)
+                                                            </h5>
+
+                                                            <div class="form-group">
+                                                                <select class="form-control" id="@departmentAction.ControlName" required>
+                                                                    <option value="">Select</option>
+                                                                    @foreach (var e in items)
+                                                                    {
+                                                                        <option value="@e">@e</option>
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </fieldset>
+                                                    }
+                                                    <br />
+                                                }
+
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            @foreach (var departmentAction in item)
+                                            {
+
+
+
+                                                @if (departmentAction.ControlName == "Checkbox")
+                                                {
+
+                                                    <div class="col-md-3">
+                                                        <div class="form-check" style="zoom:1.3;">
+                                                            <input type="checkbox" class="form-check-input" id="@departmentAction.Label">
+                                                            <label class="form-check-label" for="exampleCheck1">@departmentAction.Label</label>
+                                                        </div>
+
+                                                    </div>
+
+                                                }
+                                                else if (departmentAction.ControlName == "Radio")
+                                                {
+                                                    var items = departmentAction.Options.Split(',');
+
+
+                                                    <fieldset>
+                                                        <h5>
+                                                            @(departmentAction.Alias ?? departmentAction.Label)
+                                                        </h5>
+                                                        <br />
+                                                        @foreach (var e in items)
+                                                        {
+                                                            <input type="radio" name="@departmentAction.Label" value="@e">
+                                                            <label class="form-check-label" for="exampleCheck1">@e</label>
+                                                        }
+                                                    </fieldset>
+
+
+                                                }
+                                                else if (departmentAction.ControlName == "Textarea")
+                                                {
+                                                    <fieldset>
+                                                        <h5>
+                                                            @(departmentAction.Alias ?? departmentAction.Label)
+                                                        </h5>
+
+                                                        <div class="form-group">
+                                                            <textarea class="form-control" id="@departmentAction.Label" placeholder="@departmentAction.PlaceHolder" required></textarea>
+                                                        </div>
+                                                    </fieldset>
+                                                }
+                                                else if (departmentAction.ControlName == "Dropdown")
+                                                {
+                                                    var items = departmentAction.Options.Split(',');
+
+                                                    <fieldset>
+                                                        <h5>
+                                                            @(departmentAction.Alias ?? departmentAction.Label)
+                                                        </h5>
+
+                                                        <div class="form-group">
+                                                            <select class="form-control" id="@departmentAction.Label" required>
+                                                                <option value="">Select</option>
+                                                                @foreach (var e in items)
+                                                                {
+                                                                    <option value="@e">@e</option>
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </fieldset>
+                                                }
+                                                <br />
+                                            }
+                                        }
+                                      
+
+
+                                    }
+
+                                 
+                                       <br/>
+                                        <button onclick="executeAction(event)" class="btn btn-primary">Save</button>
+                                   
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+@if (departmentActions?.Count>0)
+{
+    @section Scripts {
+    <script>
+        debugger;
+
+        var departmentActions = @Html.Raw(Json.Serialize(ViewBag.DepartmentActions));
+      
+        let data = [];
+
+            function executeAction(e) {
+                data = [];
+                debugger;
+            e.preventDefault();
+            debugger;
+            let requestId = $('#hfRequestId').val();
+                var controlName = '';
+
+                for (let departmentAction of departmentActions) {
+
+                    if (departmentAction.controlName == "Radio") {
+                        var dataValue = $("input[type='radio'][name='" + departmentAction.label + "']:checked").val();
+                        data.push({
+                            RequestId: requestId,
+                            DataValue: dataValue,
+                            DepartmentDecisionId:departmentAction.id
+                        })
+                    }
+                    else if (departmentAction.controlName == "Checkbox") {
+                        var controlName = `#${departmentAction.label}`;
+                        var dataValue = $(controlName).prop('checked');
+                        data.push({
+                            RequestId: requestId,
+                            DataValue: dataValue==false?'false':'true',
+                            DepartmentDecisionId: departmentAction.id
+                        })
+                    }
+                    else{
+                        var controlName = `#${departmentAction.label}`;
+                        var dataValue = $(controlName).val();
+                        data.push({
+                            RequestId: requestId,
+                            DataValue: dataValue == "on" ? 'true' : dataValue,
+                            DepartmentDecisionId: departmentAction.id
+                        })
+                    }
+
+                   
+                }
+
+                if (data.length>0) {
+                    $.ajax({
+                        url: '@Url.Action("ExecuteDecision", "Request")',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(data),
+                        success: function (data) {
+                            if (data.isSuccess) {
+                                toastr.success("Operation executed successfully.");
+                                window.location.href = '@Url.Action("index", "request")';
+                            }
+                            else
+                                toastr.error(data.message);
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('There was a problem with the ajax request:', error);
+                        }
+                    });
+
+                }
+
+            }
+
+     
+        </script>
+    }
+}
+
+
+@if (isAdmin && (request.Status == "IN_PROGRESS" || request.Status == "NEW"))
+{
+    @section Scripts {
+    <script>
+
+
+        function approve() {
+            $('#span-validate-final-comment').hide();
+            let requestId = $('#hfRequestId').val();
+            let comment = $('#txt-final-comment').val();
+            if (confirm('Are you sure you want to approve the request?')) {
+                $.ajax({
+                    url: '@Url.Action("approve", "request")',
+                        type: 'GET',
+                        data: {
+                            requestId: requestId,
+                            comment: comment
+                        },
+                        dataType: 'json',
+                        success: function (data) {
+                            if(data.isSuccess){
+                                toastr.success('Operation Executed Successfully');
+                                window.location.href = '@Url.Action("index", "request")';
+                            }
+                            else
+                                toastr.error(data.message);
+                           
+                        },
+                        error: function (xhr, status, error) {
+                            console.error(xhr.responseText);
+                        }
+                    });
+                }
+            }
+
+            function reject() {
+                let requestId = $('#hfRequestId').val();
+                let comment = $('#txt-final-comment').val();
+                if (comment) {
+                    if (confirm('Are you sure you want to reject the request?')) {
+                        $.ajax({
+                            url: '@Url.Action("reject", "request")',
+                            type: 'GET',
+                            data: {
+                                requestId: requestId,
+                                comment: comment
+                            },
+                            dataType: 'json',
+                            success: function (data) {
+                                if (data.isSuccess) {
+                                    toastr.success('Operation Executed Successfully');
+                                    window.location.href = '@Url.Action("index", "request")';
+                                }
+                                else
+                                    toastr.error(data.message);
+
+                            },
+                            error: function (xhr, status, error) {
+                                console.error(xhr.responseText);
+                            }
+                        });
+                    }
+                }
+                else
+                    $('#span-validate-final-comment').show();
+               
+            }
+
+        </script>
+    }
+}
+
+<style>
+    .label-header{
+        font-weight: 500;
+    }
+</style>
